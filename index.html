@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Application Tracker | Nathaniel Caramelo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --charcoal: #15161B;
+      --card: #1F2026;
+      --text: #F5F5F3;
+      --muted: #A7AAB3;
+      --orange: #FF8A4C;
+      --btn: #D9480F;
+      --line: #2c2e37;
+      --radius: 4px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Poppins, Arial, sans-serif;
+      background: var(--charcoal);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    header, main { max-width: 1100px; margin: 0 auto; padding-left: 20px; padding-right: 20px; }
+    header { padding-top: 40px; }
+    header .bar { width: 56px; height: 4px; background: var(--btn); margin-bottom: 14px; }
+    h1 { margin: 0 0 6px; font-size: clamp(1.6rem, 4vw, 2.2rem); }
+    .sub { color: var(--muted); margin: 0; }
+    main { padding-bottom: 60px; }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin: 20px 0;
+    }
+    .stat {
+      background: var(--card);
+      border-top: 3px solid var(--btn);
+      border-radius: var(--radius);
+      padding: 14px;
+    }
+    .stat b { display: block; font-size: 1.6rem; color: var(--orange); }
+    .stat span { color: var(--muted); font-size: .85rem; }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      margin: 12px 0;
+    }
+    .toolbar label { color: var(--muted); font-size: .9rem; }
+    select {
+      font: inherit;
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid #33353f;
+      border-radius: var(--radius);
+      padding: 8px 10px;
+    }
+    .table-wrap {
+      background: var(--card);
+      border-radius: var(--radius);
+      overflow-x: auto;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+    th, td {
+      text-align: left;
+      padding: 12px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+    th {
+      color: var(--orange);
+      font-weight: 600;
+      font-size: .8rem;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    a { color: var(--orange); }
+    .pill {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-size: .78rem;
+      border: 1px solid currentColor;
+      white-space: nowrap;
+    }
+    .s-Applied { color: #8FB8FF; }
+    .s-Interview { color: #FFD166; }
+    .s-Offer { color: #6FD3A0; }
+    .s-Rejected { color: #F28B82; }
+    .s-No-response { color: var(--muted); }
+    .s-Withdrawn { color: var(--muted); }
+    .empty { padding: 30px; text-align: center; color: var(--muted); }
+    .foot { color: var(--muted); font-size: .85rem; margin-top: 16px; }
+
+    @media (max-width: 640px) {
+      thead { display: none; }
+      table, tbody, tr, td { display: block; width: 100%; }
+      tr { border-bottom: 1px solid var(--line); padding: 10px 0; }
+      td { border: 0; padding: 4px 14px; }
+      td::before {
+        content: attr(data-label);
+        display: block;
+        color: var(--muted);
+        font-size: .72rem;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="bar"></div>
+  <h1>Job Application Tracker</h1>
+  <p class="sub">Nathaniel Caramelo | Project Assistant and Operations Specialist</p>
+</header>
+
+<main>
+  <section class="stats" aria-label="Summary">
+    <div class="stat"><b id="stat-total">0</b><span>Total applied</span></div>
+    <div class="stat"><b id="stat-active">0</b><span>Active (Applied or Interview)</span></div>
+    <div class="stat"><b id="stat-interview">0</b><span>Interviews</span></div>
+    <div class="stat"><b id="stat-offer">0</b><span>Offers</span></div>
+  </section>
+
+  <div class="toolbar">
+    <div>
+      <label for="filter">Filter by status: </label>
+      <select id="filter">
+        <option value="All">All</option>
+        <option value="Applied">Applied</option>
+        <option value="Interview">Interview</option>
+        <option value="Offer">Offer</option>
+        <option value="Rejected">Rejected</option>
+        <option value="No response">No response</option>
+        <option value="Withdrawn">Withdrawn</option>
+      </select>
+    </div>
+    <span class="sub">Newest first</span>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Date applied</th>
+          <th>Company</th>
+          <th>Role</th>
+          <th>Posting</th>
+          <th>Status</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <div id="empty" class="empty" hidden>No applications yet. Post a job link in chat to add one.</div>
+  </div>
+
+  <p class="foot">Last updated: <span id="updated"></span></p>
+</main>
+
+<script>
+  // ============================================================
+  // APPLICATIONS LIST
+  // Each job is one line inside the square brackets below.
+  // Format: { date: "YYYY-MM-DD", company: "...", role: "...",
+  //           link: "https://...", status: "...", notes: "..." }
+  // Status must be one of: Applied, Interview, Offer, Rejected,
+  // No response, Withdrawn
+  // ============================================================
+  const APPLICATIONS = [
+    // (no applications yet)
+  ];
+
+  const LAST_UPDATED = "2026-10-18";
+
+  // ============================================================
+  // Display code (no need to change anything below this line)
+  // ============================================================
+  function esc(value) {
+    return String(value ?? "").replace(/[&<>"']/g, c => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    }[c]));
+  }
+
+  function statusClass(status) {
+    return "s-" + String(status).replace(/\s+/g, "-");
+  }
+
+  function render() {
+    const filter = document.getElementById("filter").value;
+    const sorted = [...APPLICATIONS].sort((a, b) =>
+      String(b.date).localeCompare(String(a.date)));
+    const rows = sorted.filter(a => filter === "All" || a.status === filter);
+
+    const count = s => APPLICATIONS.filter(a => a.status === s).length;
+    document.getElementById("stat-total").textContent = APPLICATIONS.length;
+    document.getElementById("stat-active").textContent = count("Applied") + count("Interview");
+    document.getElementById("stat-interview").textContent = count("Interview");
+    document.getElementById("stat-offer").textContent = count("Offer");
+
+    const tbody = document.getElementById("rows");
+    tbody.innerHTML = rows.map(a => {
+      const posting = a.link
+        ? `<a href="${esc(a.link)}" target="_blank" rel="noopener">View posting</a>`
+        : "";
+      return `
+        <tr>
+          <td data-label="Date applied">${esc(a.date)}</td>
+          <td data-label="Company">${esc(a.company)}</td>
+          <td data-label="Role">${esc(a.role)}</td>
+          <td data-label="Posting">${posting}</td>
+          <td data-label="Status"><span class="pill ${statusClass(a.status)}">${esc(a.status)}</span></td>
+          <td data-label="Notes">${esc(a.notes)}</td>
+        </tr>`;
+    }).join("");
+
+    document.getElementById("empty").hidden = rows.length > 0;
+    document.getElementById("updated").textContent = LAST_UPDATED;
+  }
+
+  document.getElementById("filter").addEventListener("change", render);
+  render();
+</script>
+
+</body>
+</html>
